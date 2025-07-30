@@ -36,6 +36,22 @@ current_message = ""
 DOG_IMAGE = pygame.transform.scale(pygame.image.load('img/dog.jpg').convert_alpha(), (80, 90))
 BONE_IMAGE = pygame.transform.scale(pygame.image.load('img/bone.jpg').convert_alpha(), (70, 50))
 
+class GameObject:
+    def __init__(self, x, y, width, height):
+        self.rect = pygame.Rect(x, y, width, height)
+
+    def draw(self, surface, color):
+        pygame.draw.rect(surface, color, self.rect)
+
+# Клас для стін
+class Wall(GameObject):
+    def __init__(self, x, y, width=5, height=5):
+        super().__init__(x, y, width, height)
+
+    def draw(self, surface):
+        pygame.draw.rect(surface, WALL_COLOR, self.rect)
+
+
 class Maze:
     def __init__(self, filepath):
         self.level = self.read_file_to_list(filepath)
@@ -60,7 +76,7 @@ class Maze:
         for row in self.level:
             for col in row:
                 if col == "W":
-                    wall_rect = pygame.Rect(x, y, 5, 5)
+                    wall_rect = Wall(x, y, MAZE_CELL_SIZE, MAZE_CELL_SIZE)
                     pygame.draw.rect(SCREEN, WALL_COLOR, wall_rect, 0)
                     walls.append(wall_rect)
                 x += 5
@@ -109,7 +125,6 @@ else:
     show_load_prompt = False
 
 
-
 class Player:
     def __init__(self):
         global PLAYER_X, PLAYER_Y
@@ -147,11 +162,15 @@ class Player:
                 current_message = "Шарік злякався і втік, гра завершена."
                 GAME_OVER = True
                 game_result = 'RUN_AWAY'
+                # Збереження програшу
+                save_manager.save(self.player_rect, previous_move, path_index)
             else:
                 print("Шарік заблукав, гра завершена.")
                 current_message = "Шарік заблукав, гра завершена."
                 GAME_OVER = True
                 game_result = 'LOST'
+                # Збереження програшу
+                save_manager.save(self.player_rect, previous_move, path_index)
         return previous_move
 
 # Ініціалізуємо гравця

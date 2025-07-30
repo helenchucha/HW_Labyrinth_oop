@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b07ccf8a-461f-4afd-bf80-1ff0170dced9" name="Changes" comment="Added saving progress in JSON and requesting its loading before the game.&#10;Ver 2.0.3">
+    <list default="true" id="b07ccf8a-461f-4afd-bf80-1ff0170dced9" name="Changes" comment="Added saving progress in JSON and requesting its loading before the game.&#10;Ver 2.0.4">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
@@ -93,13 +93,22 @@
       <option name="project" value="LOCAL" />
       <updated>1753873957412</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Added saving progress in JSON and requesting its loading before the game.&#10;Ver 2.0.4">
+      <option name="closed" value="true" />
+      <created>1753878355651</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1753878355651</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Working version of the program&#10;Ver 2.0.1" />
     <MESSAGE value="Added saving progress in JSON and requesting its loading before the game.&#10;Ver 2.0.2" />
     <MESSAGE value="Added saving progress in JSON and requesting its loading before the game.&#10;Ver 2.0.3" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added saving progress in JSON and requesting its loading before the game.&#10;Ver 2.0.3" />
+    <MESSAGE value="Added saving progress in JSON and requesting its loading before the game.&#10;Ver 2.0.4" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added saving progress in JSON and requesting its loading before the game.&#10;Ver 2.0.4" />
   </component>
 </project>
