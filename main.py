@@ -99,22 +99,6 @@ class SaveLoadManager:
 
 # Перед запуском запитати, чи є збереження
 save_manager = SaveLoadManager()
-'''if save_manager.exists():
-    print("Знайдено збереження. Бажаєте його завантажити? (y/n): ")
-    choice = input().lower()
-    if choice == 'y':
-        data = save_manager.load()
-        if data:
-            PLAYER_X = data['player_x']
-            PLAYER_Y = data['player_y']
-            previous_move = data['previous_move']
-            path_index = data['path_index']
-        else:
-            print("Не вдалося завантажити збереження.")
-    else:
-        PLAYER_X = (SCREEN_WIDTH - labyrinth.maze_length) / 2 + 15
-        PLAYER_Y = (SCREEN_HEIGHT - labyrinth.maze_length) / 2 + 10
-        save_manager.delete()'''
 
 if save_manager.exists():
     # Замість print — додамо стан для меню
@@ -211,7 +195,7 @@ class Game:
 
 
     def show_message(self, text, x, y):
-        font = pygame.font.SysFont("Arial", 20)
+        font = pygame.font.SysFont("Arial", 30)
         message = font.render(text, True, (255, 0, 0))
         message_rect = message.get_rect(topleft=(x, y))
         SCREEN.blit(message, message_rect)
@@ -311,7 +295,7 @@ while running:
     if GAME_OVER:
         # Після завершення гри виводимо повідомлення
         if game_result == 'WIN':
-            game.show_message("Вітаємо з перемогою!", SCREEN_WIDTH // 4, SCREEN_HEIGHT // 3)
+            game.show_message("Вітаємо з перемогою!", SCREEN_WIDTH // 3.5, SCREEN_HEIGHT // 3)
         elif game_result == 'HIT_WALL':
             game.show_message("Шарік вдарився об стіну, гра завершена.", SCREEN_WIDTH // 10, SCREEN_HEIGHT // 3)
         elif game_result == 'RUN_AWAY':
