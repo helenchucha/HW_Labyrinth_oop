@@ -1,6 +1,7 @@
 import os
-from collections import deque
+import json
 import pygame
+
 
 # Ініціалізація та налаштування
 os.environ["SDL_VIDEO_CENTERED"] = "1"
@@ -9,6 +10,7 @@ pygame.init()
 # Константи
 SCREEN_WIDTH, SCREEN_HEIGHT = 600, 600
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Лабіринт")
 MAZE_CELL_SIZE = 5  # Розмір клітинки лабіринту
 FONT_SIZE = 20
 
@@ -31,9 +33,8 @@ game_result = None  # 'WIN', 'HIT_WALL', 'RUN_AWAY', 'LOST'
 current_message = ""
 
 # Завантаження зображень
-DOG_IMAGE = pygame.transform.scale(pygame.image.load('img/dog.jpg').convert_alpha(), (40, 50))
-BONE_IMAGE = pygame.transform.scale(pygame.image.load('img/bone.jpg').convert_alpha(), (50, 40))
-
+DOG_IMAGE = pygame.transform.scale(pygame.image.load('img/dog.jpg').convert_alpha(), (80, 90))
+BONE_IMAGE = pygame.transform.scale(pygame.image.load('img/bone.jpg').convert_alpha(), (70, 50))
 
 class Maze:
     def __init__(self, filepath):
@@ -68,6 +69,54 @@ class Maze:
 
 labyrinth = Maze(LEVEL_FILE_PATH + '0.txt')
 
+# Клас для збереження та завантаження прогресу
+class SaveLoadManager:
+    def __init__(self, filename='save_game.json'):
+        self.filename = filename
+
+    def save(self, player_rect, previous_move, path_idx):
+        data = {
+            'player_x': player_rect.x,
+            'player_y': player_rect.y,
+            'previous_move': previous_move,
+            'path_index': path_idx
+        }
+        with open(self.filename, 'w') as f:
+            json.dump(data, f)
+
+    def load(self):
+        if not os.path.exists(self.filename):
+            return None
+        with open(self.filename, 'r') as f:
+            return json.load(f)
+
+    def exists(self):
+        return os.path.exists(self.filename)
+
+    def delete(self):
+        if os.path.exists(self.filename):
+            os.remove(self.filename)
+
+# Перед запуском запитати, чи є збереження
+save_manager = SaveLoadManager()
+if save_manager.exists():
+    print("Знайдено збереження. Бажаєте його завантажити? (y/n): ")
+    choice = input().lower()
+    if choice == 'y':
+        data = save_manager.load()
+        if data:
+            PLAYER_X = data['player_x']
+            PLAYER_Y = data['player_y']
+            previous_move = data['previous_move']
+            path_index = data['path_index']
+        else:
+            print("Не вдалося завантажити збереження.")
+    else:
+        PLAYER_X = (SCREEN_WIDTH - labyrinth.maze_length) / 2 + 15
+        PLAYER_Y = (SCREEN_HEIGHT - labyrinth.maze_length) / 2 + 10
+        save_manager.delete()
+
+
 class Player:
     def __init__(self):
         global PLAYER_X, PLAYER_Y
@@ -95,6 +144,8 @@ class Player:
                 current_message = "Шарік вдарився об стіну, гра завершена."
                 GAME_OVER = True
                 game_result = 'HIT_WALL'
+                # Збереження програшу
+                save_manager.save(self.player_rect, previous_move, path_index)
             elif previous_move and ((direction == 'LEFT' and previous_move == 'RIGHT') or
                                     (direction == 'RIGHT' and previous_move == 'LEFT') or
                                     (direction == 'UP' and previous_move == 'DOWN') or
@@ -113,8 +164,6 @@ class Player:
 #Параметри гравця
 PLAYER_WIDTH = PLAYER_HEIGHT = 15
 PLAYER_COLOR = (255, 0, 0)
-PLAYER_X = (SCREEN_WIDTH - labyrinth.maze_length) / 2 + 15
-PLAYER_Y = (SCREEN_HEIGHT - labyrinth.maze_length) / 2 + 10
 
 player = Player()
 
@@ -195,7 +244,7 @@ while running:
     else:
         # Готуємо рівень
         labyrinth.load_level()
-        SCREEN.blit(DOG_IMAGE, [(SCREEN_WIDTH - labyrinth.maze_length) / 2 - 40, (SCREEN_HEIGHT - labyrinth.maze_length) / 2 - 15])
+        SCREEN.blit(DOG_IMAGE, [(SCREEN_WIDTH - labyrinth.maze_length) / 2 - 80, (SCREEN_HEIGHT - labyrinth.maze_length) / 2 - 30])
         SCREEN.blit(BONE_IMAGE, [labyrinth.maze_length + 130, labyrinth.maze_length + 110])
         # Малюємо рівень та гравця
         pygame.draw.rect(SCREEN, PLAYER_COLOR, player.player_rect)
