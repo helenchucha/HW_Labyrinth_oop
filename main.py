@@ -99,7 +99,7 @@ class SaveLoadManager:
 
 # Перед запуском запитати, чи є збереження
 save_manager = SaveLoadManager()
-if save_manager.exists():
+'''if save_manager.exists():
     print("Знайдено збереження. Бажаєте його завантажити? (y/n): ")
     choice = input().lower()
     if choice == 'y':
@@ -114,7 +114,27 @@ if save_manager.exists():
     else:
         PLAYER_X = (SCREEN_WIDTH - labyrinth.maze_length) / 2 + 15
         PLAYER_Y = (SCREEN_HEIGHT - labyrinth.maze_length) / 2 + 10
-        save_manager.delete()
+        save_manager.delete()'''
+
+if save_manager.exists():
+    # Замість print — додамо стан для меню
+    show_load_prompt = True
+    load_prompt_answered = False
+    load_decision = None
+else:
+    show_load_prompt = False
+
+
+
+#Параметри гравця
+PLAYER_WIDTH = PLAYER_HEIGHT = 15
+PLAYER_COLOR = (255, 0, 0)
+
+# Ініціалізація гравця
+PLAYER_X = (SCREEN_WIDTH - labyrinth.maze_length) / 2 + 15
+PLAYER_Y = (SCREEN_HEIGHT - labyrinth.maze_length) / 2 + 10
+
+player = None  # створимо пізніше
 
 
 class Player:
@@ -161,11 +181,7 @@ class Player:
                 game_result = 'LOST'
         return previous_move
 
-#Параметри гравця
-PLAYER_WIDTH = PLAYER_HEIGHT = 15
-PLAYER_COLOR = (255, 0, 0)
-
-player = Player()
+#player = Player()
 
 class Game:
     def move_player(self, dx, dy):
@@ -202,7 +218,7 @@ class Game:
         message = font.render(text, True, (255, 0, 0))
         message_rect = message.get_rect(topleft=(x, y))
         SCREEN.blit(message, message_rect)
-        pygame.display.flip()
+        #pygame.display.flip()
 
 game = Game()
 
@@ -210,10 +226,74 @@ game = Game()
 
 # Основний цикл гри
 running = True
+
 while running:
+
+    # Якщо показуємо меню запиту завантаження
+    if 'show_load_prompt' in globals() and show_load_prompt:
+        # Малюємо затемнений фон
+        overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
+        overlay.set_alpha(180)
+        overlay.fill((0, 0, 0))
+        SCREEN.blit(overlay, (0, 0))
+
+        # Виводимо запит
+        font = pygame.font.SysFont("Arial", 30)
+        question_text = "Знайдено збереження. Завантажити?"
+        question_surf = font.render(question_text, True, (255, 255, 255))
+        question_rect = question_surf.get_rect(center=(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 - 50))
+        SCREEN.blit(question_surf, question_rect)
+
+        # Створимо кнопки "Так" і "Ні"
+        button_width, button_height = 100, 50
+        yes_button_rect = pygame.Rect(SCREEN_WIDTH / 2 - 110, SCREEN_HEIGHT / 2 + 10, button_width, button_height)
+        no_button_rect = pygame.Rect(SCREEN_WIDTH / 2 + 10, SCREEN_HEIGHT / 2 + 10, button_width, button_height)
+
+        # Малюємо кнопки
+        pygame.draw.rect(SCREEN, (0, 255, 0), yes_button_rect)
+        pygame.draw.rect(SCREEN, (255, 0, 0), no_button_rect)
+
+        # Текст на кнопках
+        font_button = pygame.font.SysFont("Arial", 20)
+        yes_text = font_button.render("Так", True, (0, 0, 0))
+        no_text = font_button.render("Ні", True, (0, 0, 0))
+        SCREEN.blit(yes_text, yes_text.get_rect(center=yes_button_rect.center))
+        SCREEN.blit(no_text, no_text.get_rect(center=no_button_rect.center))
+
+        # Обробка натискань у цьому ж циклі
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = event.pos
+                if yes_button_rect.collidepoint(mouse_pos):
+                    # Завантажити збереження
+                    data = save_manager.load()
+                    if data:
+                        PLAYER_X = data['player_x']
+                        PLAYER_Y = data['player_y']
+                        previous_move = data['previous_move']
+                        path_index = data['path_index']
+                    show_load_prompt = False
+                elif no_button_rect.collidepoint(mouse_pos):
+                    # Почати заново
+                    PLAYER_X = (SCREEN_WIDTH - labyrinth.maze_length) / 2 + 15
+                    PLAYER_Y = (SCREEN_HEIGHT - labyrinth.maze_length) / 2 + 10
+                    save_manager.delete()
+                    show_load_prompt = False
+                    # скидаємо стан
+                    GAME_OVER = False
+                    game_result = None
+                    current_message = ""
+
+        player = Player()
+
+        # Оновлюємо екран і пропускаємо інший рендеринг
+        pygame.display.flip()
+        continue
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+
         elif event.type == pygame.KEYDOWN:
             if not GAME_OVER:
                 if event.key == pygame.K_LEFT:
