@@ -126,17 +126,6 @@ else:
 
 
 
-#Параметри гравця
-PLAYER_WIDTH = PLAYER_HEIGHT = 15
-PLAYER_COLOR = (255, 0, 0)
-
-# Ініціалізація гравця
-PLAYER_X = (SCREEN_WIDTH - labyrinth.maze_length) / 2 + 15
-PLAYER_Y = (SCREEN_HEIGHT - labyrinth.maze_length) / 2 + 10
-
-player = None  # створимо пізніше
-
-
 class Player:
     def __init__(self):
         global PLAYER_X, PLAYER_Y
@@ -181,7 +170,15 @@ class Player:
                 game_result = 'LOST'
         return previous_move
 
-#player = Player()
+# Ініціалізуємо гравця
+PLAYER_WIDTH = PLAYER_HEIGHT = 15
+PLAYER_COLOR = (255, 0, 0)
+
+# Початкові координати гравця
+PLAYER_X = (SCREEN_WIDTH - labyrinth.maze_length) / 2 + 15
+PLAYER_Y = (SCREEN_HEIGHT - labyrinth.maze_length) / 2 + 10
+
+player = Player()
 
 class Game:
     def move_player(self, dx, dy):
